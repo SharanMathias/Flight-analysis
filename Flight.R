@@ -1,0 +1,49 @@
+#flight<- read.csv(file.choose(),header = T)
+flight<- airline
+View(flight)
+library(ggplot2)
+library(plotrix)
+
+#Price Graph
+dataframe<-data.frame(x=flight$airline,y=flight$price)
+priceinput<- dataframe
+price<- priceinput[order(priceinput[,2],decreasing=TRUE),]
+q<-ggplot(price, aes(x=price$x, y=price$y)) +geom_point(size=3)+geom_segment(aes(x=price$x,xend=price$x,y=0,yend=price$y)) +labs(x="Airlines", y="Prices")
+q + ggtitle("Price Rates Of Various Airlines") + theme(plot.title = element_text(hjust = 0.5),axis.text.x = element_text(angle = 60, hjust = 1))
+
+#Cheap Price Airlines
+dataframe<-data.frame(x=flight$airline,y=flight$price)
+priceinput<- dataframe
+price<- head(priceinput[order(priceinput[,2],decreasing=TRUE),],15)
+q<-ggplot(price, aes(x=x, y=y)) +geom_point(size=3)+geom_segment(aes(x=price$x,xend=price$x,y=0,yend=price$y)) +labs(x="Airlines", y="Prices")
+q + ggtitle("Cheapest Ticket") + theme(plot.title = element_text(hjust = 0.5),axis.text.x = element_text(angle = 60, hjust = 1))
+
+#Satisfaction Rate Of Customer
+input <- data.frame(x=flight$airline,y=flight$satisfaction_rate)
+output<- input[order(input[,2],decreasing=FALSE),]
+print(output)
+H<-output$x
+M<-output$y
+p<-ggplot(output, aes(x=H, y=M)) + geom_bar(stat="identity") +labs(x="Airlines", y="Rating")
+p + ggtitle("Rating By Customers")+geom_boxplot() + theme(plot.title = element_text(hjust = 0.5),axis.text.x = element_text(angle = 60, hjust = 1))
+
+#Mostly Higly Rated
+rateframe<-data.frame(x1=flight$airline,y1=flight$satisfaction_rate)
+rate<-head(rateframe[order(rateframe[,2],decreasing = TRUE),],15)
+barplot(rate$y1,names.arg = rate$x1,ylab = "Rating",col="blue",main = "Mostly Rated Airlines",border="red",las=2)
+
+#Price Comparision With Rating
+cheapframe<-data.frame(x1=flight$satisfaction_rate,y1=flight$price,name=flight$airline)
+cheap<-cheapframe
+x1<-cheap$x1
+yl<-cheap$y1
+z1<-cheap$name
+ggplot(cheap,aes(x=x1,y=y1,color=z1))+labs(title="Comparision Of Price With Rating")+xlab("Ratings")+ylab("Prices")+geom_point()
+
+#Finding Secure Airlines
+secureframe<-data.frame(x1=flight$fatalities,y1=flight$incidents,name=flight$airline)
+secure<-secureframe
+x1<-cheap$x1
+yl<-cheap$y1
+z1<-cheap$name
+ggplot(cheap,aes(x=x1,y=y1,color=z1))+labs(title="Secure Airlines")+xlab("Fatalities")+ylab("Incidents")+geom_point()
